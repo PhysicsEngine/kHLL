@@ -50,8 +50,9 @@ class GaussianWeightedKEstimator(BaseKEstimater):
                 hll.update(d)
             k = hll.calc_cardinality()
             w = self.getWeight(k)
-            results.append(w * k)
-            weights.append(w)
+            if i < (RIKEstimator.MAX_REGISTER_INDEX / 2):
+                results.append(w * k)
+                weights.append(w)
 
         self.k = sum(results) / sum(weights)
 
@@ -78,7 +79,7 @@ class RIKEstimator(BaseKEstimater):
 
     def serial_train(self, data):
         """
-        Serial traingin on each HLL estimation
+        Serial training on each HLL estimation
         :param data:
         :return:
         """
@@ -117,3 +118,31 @@ class RIKEstimator(BaseKEstimater):
 
         self.k = reduce(lambda x, y: x + y, results) / len(results)
 
+class HyperKEstimator(BaseKEstimater):
+    def __init__(self, kmin, kmax, hashFunc, iter_n):
+        BaseKEstimater.__init__(self, kmin, kmax, hashFunc)
+        self.mean = numpy.mean([self.kmin, self.kmax])
+        self.iter_n = iter_n
+
+    def getWeight(self, k):
+        return CalcWeightLib.gaussian_pdf(k, self.mean)
+
+    def train(self, data):
+        """
+        Serial training on each HLL estimation
+        :param data:
+        :return:
+        """
+        results = []
+        weights = []
+        for i in xrange(1, self.iter_n):
+            hll = BaseHyperLogLog(0.01, i, self.hashFunc)
+            for d in data:
+                hll.update(d)
+            k = hll.calc_cardinality()
+            w = self.getWeight(k)
+            if i < (self.iter_n/ 2):
+                results.append(w * k)
+                weights.append(w)
+
+        self.k = sum(results) / sum(weights)
