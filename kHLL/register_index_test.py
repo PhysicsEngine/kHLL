@@ -26,6 +26,11 @@ class RIKEstimator(BaseKEstimater):
             self.serial_train(data)
 
     def serial_train(self, data):
+        """
+        Serial traingin on each HLL estimation
+        :param data:
+        :return:
+        """
         results = []
         for i in xrange(1, RIKEstimator.MAX_REGISTER_INDEX):
             hll = BaseHyperLogLog(0.01, i, md5_for_vec)
@@ -36,6 +41,11 @@ class RIKEstimator(BaseKEstimater):
         self.k = reduce(lambda x, y: x + y, results) / len(results)
 
     def parallel_train(self, data):
+        """
+        Parallel training on each HLL estimation
+        :param data:
+        :return:
+        """
         jobs = []
         q = Queue()
         for i in xrange(1, RIKEstimator.MAX_REGISTER_INDEX):
