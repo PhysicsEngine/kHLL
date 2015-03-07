@@ -3,8 +3,10 @@ README.md
 setup.cfg
 setup.py
 kHLL/__init__.py
+kHLL/kestimate.py
 kHLL/HLL/__init__.py
 kHLL/HLL/hyperloglog.py
 kHLL/hash/__init__.py
 kHLL/hash/common.py
 kHLL/hash/image.py
+test/test_hyperloglog.py
