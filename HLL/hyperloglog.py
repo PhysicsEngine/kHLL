@@ -19,8 +19,8 @@ class HLLRegister(list):
 
     def _calcvalue(self, hashValue):
         value = hashValue >> self.registerIndexSize
-        print format(value, 'b')
-        print format(value, 'b')[::-1]
+        # print format(value, 'b')
+        # print format(value, 'b')[::-1]
         return format(value, 'b')[::-1].index('1') + 1
 
 class BaseHyperLogLog(object):
@@ -34,6 +34,6 @@ class BaseHyperLogLog(object):
         invs = map(lambda x: 2**(-x), self.register)
         return self.constant * len(self.register)**2 * sum(invs)
 
-    def update(data):
+    def update(self, data):
         self.register.update(self.hashFunc(data))
 
