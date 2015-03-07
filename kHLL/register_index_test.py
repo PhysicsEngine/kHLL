@@ -1,33 +1,9 @@
-from abc import abstractmethod
-from scipy.stats import norm
+__author__ = 'lewuathe'
+
 from kestimate import BaseKEstimater
 from HLL.hyperloglog import BaseHyperLogLog
 from hash.image import md5_for_vec
 from multiprocessing import Process, Queue
-
-class BaseKEstimater(object):
-    def __init__(self, kmin, kmax, hashFunc):
-        self.kmin = kmin
-        self.kmax = kmax
-        self.hashFunc = hashFunc
-        self.k = 0
-
-    def getK(self):
-        if self.k <= 0:
-            raise Exception("train failed")
-
-        return int(self.k)
-
-    @abstractmethod
-    def train(self, data):
-        pass
-
-class GaussianWeight(object):
-    def __init__(self, mean):
-        self.mean = mean
-    
-    def pdf(self, value):
-        return norm.pdf(value, self.mean)
 
 class RIKEstimator(BaseKEstimater):
     """
@@ -74,7 +50,7 @@ class RIKEstimator(BaseKEstimater):
         q = Queue()
         for i in xrange(1, RIKEstimator.MAX_REGISTER_INDEX):
             jobs.append(Process(target = RIKEstimator.delegate,
-                                args = (q, 0.01, i, data, md5_for_vec)))
+                        args = (q, 0.01, i, data, md5_for_vec)))
 
         for j in jobs:
             j.start()
@@ -89,3 +65,11 @@ class RIKEstimator(BaseKEstimater):
                 results.append(ret[0])
 
         self.k = reduce(lambda x, y: x + y, results) / len(results)
+
+
+if __name__ == "__main__":
+    from sklearn import datasets
+    estimator = RIKEstimator(5, 1, md5_for_vec)
+    X = datasets.load_iris()
+    estimator.train(X.data)
+    print(estimator.getK())
