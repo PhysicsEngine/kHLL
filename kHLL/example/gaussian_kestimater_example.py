@@ -7,7 +7,7 @@ def main():
     X = iris.data
     Y = iris.target
     
-    model = GaussianWeightedKEstimator(1, 5, md5_for_vec, 20)
+    model = GaussianWeightedKEstimator(2, 7, md5_for_vec)
     model.train(X)
 
     print(model.getK())
