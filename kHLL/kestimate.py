@@ -1,5 +1,5 @@
-from HLL.hyperloglog import BaseHyperLogLog
 from abc import abstractmethod
+from scipy.stats import norm
 
 class BaseKEstimater(object):
     def __init__(self, kmin, kmax, hashFunc):
@@ -18,3 +18,9 @@ class BaseKEstimater(object):
     def train(self, data):
         pass
 
+class GaussianWeight(object):
+    def __init__(self, mean):
+        self.mean = mean
+    
+    def pdf(self, value):
+        return norm.pdf(value, self.mean)
