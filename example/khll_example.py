@@ -15,7 +15,7 @@ def main():
         model.update(x)
 
     print(len(Y))
-    print(model.cals_cardinality())
+    print(model.calc_cardinality())
 
 
 
