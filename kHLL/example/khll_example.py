@@ -2,8 +2,8 @@ __author__ = 'lewuathe'
 
 from sklearn import datasets
 
-from hash.image import md5_for_vec
-from HLL.hyperloglog import BaseHyperLogLog
+from kHLL.hash.image import md5_for_vec
+from kHLL.HLL.hyperloglog import BaseHyperLogLog
 
 def main():
     iris = datasets.load_iris()
