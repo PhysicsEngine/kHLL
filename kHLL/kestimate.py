@@ -1,6 +1,6 @@
 from abc import abstractmethod
+import numpy
 from scipy.stats import norm
-from kestimate import BaseKEstimater
 from HLL.hyperloglog import BaseHyperLogLog
 from hash.image import md5_for_vec
 from multiprocessing import Process, Queue
@@ -11,7 +11,7 @@ class BaseKEstimater(object):
         self.kmax = kmax
         self.hashFunc = hashFunc
         self.k = 0
-
+    
     def getK(self):
         if self.k <= 0:
             raise Exception("train failed")
@@ -22,12 +22,39 @@ class BaseKEstimater(object):
     def train(self, data):
         pass
 
-class GaussianWeight(object):
-    def __init__(self, mean):
-        self.mean = mean
+class CalcWeightLib(object):
+    @classmethod
+    def gaussian_pdf(cls, value, mean):
+        return norm.pdf(value, mean)
+
+class GaussianWeightedKEstimator(BaseKEstimater):
+    def __init__(self, kmin, kmax, hashFunc, iter_n):
+       BaseKEstimater.__init__(self, kmin, kmax, hashFunc)
+       self.mean = numpy.mean([self.kmin, self.kmax])
+       self.iter_n = iter_n
     
-    def pdf(self, value):
-        return norm.pdf(value, self.mean)
+    def getWeight(self, k):
+        return CalcWeightLib.gaussian_pdf(k, self.mean)
+
+    def train(self, data):
+        """
+        Serial traingin on each HLL estimation
+        :param data:
+        :return:
+        """
+        results = []
+        weights = []
+        for i in xrange(1, self.iter_n):
+            hll = BaseHyperLogLog(0.01, i, self.hashFunc)
+            for d in data:
+                hll.update(d)
+                k = hll.calc_cardinality()
+                w = self.getWeight(k)
+                results.append(w * k)
+                weights.append(w)    
+
+        self.k = sum(results) / sum(weights)
+
 
 class RIKEstimator(BaseKEstimater):
     """
@@ -89,3 +116,4 @@ class RIKEstimator(BaseKEstimater):
                 results.append(ret[0])
 
         self.k = reduce(lambda x, y: x + y, results) / len(results)
+
