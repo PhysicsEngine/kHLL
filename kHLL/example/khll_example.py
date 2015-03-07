@@ -10,13 +10,13 @@ def main():
     X = iris.data
     Y = iris.target
 
-    model = BaseHyperLogLog(0.01, 5, md5_for_vec)
-    for x in X:
-        model.update(x)
+    for i in xrange(1, 20):
+        model = BaseHyperLogLog(0.01, i, md5_for_vec)
+        for x in X:
+            model.update(x)
 
-    print(len(Y))
-    print(model.calc_cardinality())
-
+        #print(len(Y))
+        print(model.calc_cardinality())
 
 
 if __name__ == "__main__":
