@@ -48,10 +48,10 @@ class GaussianWeightedKEstimator(BaseKEstimater):
             hll = BaseHyperLogLog(0.01, i, self.hashFunc)
             for d in data:
                 hll.update(d)
-                k = hll.calc_cardinality()
-                w = self.getWeight(k)
-                results.append(w * k)
-                weights.append(w)    
+            k = hll.calc_cardinality()
+            w = self.getWeight(k)
+            results.append(w * k)
+            weights.append(w)
 
         self.k = sum(results) / sum(weights)
 
@@ -87,7 +87,7 @@ class RIKEstimator(BaseKEstimater):
             hll = BaseHyperLogLog(0.01, i, md5_for_vec)
             for d in data:
                 hll.update(d)
-            if i < RIKEstimator.MAX_REGISTER_INDEX / 2:
+            if i < (RIKEstimator.MAX_REGISTER_INDEX / 2):
                 results.append(hll.calc_cardinality())
         self.k = reduce(lambda x, y: x + y, results) / len(results)
 
