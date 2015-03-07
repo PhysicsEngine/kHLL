@@ -10,5 +10,3 @@ def hex2dec(hex_string):
     """
     return int(hex_string, 16)
 
-
-
