@@ -43,7 +43,6 @@ class GaussianWeightedKEstimator(BaseKEstimater):
             x += dx
 
         value = 1.0 /(registerIndexSize * value)
-        #print "registerIndexSize=" + str(registerIndexSize) + ", value=" + str(value)
         return value
 
     def getWeight(self, k):
