@@ -19,6 +19,19 @@ class BaseKEstimater(object):
 
         return int(self.k)
 
+    @classmethod
+    def calcHLLConstant(cls, registerIndexSize):
+        value = 0.0
+        dx = 0.1
+        x = 1.0
+        while x < 10:
+            value += ((math.log(1 + 1/x, 2)) ** registerIndexSize) + dx
+            x += dx
+
+        value = 1.0 /(registerIndexSize * value)
+        return value
+
+
     @abstractmethod
     def train(self, data):
         pass
@@ -33,18 +46,6 @@ class GaussianWeightedKEstimator(BaseKEstimater):
        BaseKEstimater.__init__(self, kmin, kmax, hashFunc)
        self.mean = numpy.mean([self.kmin, self.kmax])
     
-    @classmethod
-    def calcHLLConstant(cls, registerIndexSize):
-        value = 0.0
-        dx = 0.1
-        x = 1.0
-        while x < 10:
-            value += ((math.log(1 + 1/x, 2)) ** registerIndexSize) + dx
-            x += dx
-
-        value = 1.0 /(registerIndexSize * value)
-        return value
-
     def getWeight(self, k):
         return CalcWeightLib.gaussian_pdf(k, self.mean)
 
@@ -152,7 +153,7 @@ class HyperKEstimator(BaseKEstimater):
         results = []
         weights = []
         for i in xrange(1, self.iter_n):
-            hll = BaseHyperLogLog(0.01, i, self.hashFunc)
+            hll = BaseHyperLogLog(self.calcHLLConstant(i), i, self.hashFunc)
             for d in data:
                 hll.update(d)
             k = hll.calc_cardinality()
