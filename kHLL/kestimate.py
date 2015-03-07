@@ -119,6 +119,10 @@ class RIKEstimator(BaseKEstimater):
         self.k = reduce(lambda x, y: x + y, results) / len(results)
 
 class HyperKEstimator(BaseKEstimater):
+    """
+    The estimator for k value which is used initial k-means
+    clustering algorithm with HyperLogLog
+    """
     def __init__(self, kmin, kmax, hashFunc, iter_n):
         BaseKEstimater.__init__(self, kmin, kmax, hashFunc)
         self.mean = numpy.mean([self.kmin, self.kmax])
@@ -141,8 +145,7 @@ class HyperKEstimator(BaseKEstimater):
                 hll.update(d)
             k = hll.calc_cardinality()
             w = self.getWeight(k)
-            if i < (self.iter_n/ 2):
+            if i < (self.iter_n / 2):
                 results.append(w * k)
                 weights.append(w)
-
         self.k = sum(results) / sum(weights)
