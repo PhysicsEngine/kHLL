@@ -1,4 +1,5 @@
 from abc import abstractmethod
+import math
 import numpy
 from scipy.stats import norm
 from HLL.hyperloglog import BaseHyperLogLog
@@ -28,11 +29,23 @@ class CalcWeightLib(object):
         return norm.pdf(value, mean)
 
 class GaussianWeightedKEstimator(BaseKEstimater):
-    def __init__(self, kmin, kmax, hashFunc, iter_n):
+    def __init__(self, kmin, kmax, hashFunc):
        BaseKEstimater.__init__(self, kmin, kmax, hashFunc)
        self.mean = numpy.mean([self.kmin, self.kmax])
-       self.iter_n = iter_n
     
+    @classmethod
+    def calcHLLConstant(cls, registerIndexSize):
+        value = 0.0
+        dx = 0.1
+        x = 1.0
+        while x < 10:
+            value += ((math.log(1 + 1/x, 2)) ** registerIndexSize) + dx
+            x += dx
+
+        value = 1.0 /(registerIndexSize * value)
+        #print "registerIndexSize=" + str(registerIndexSize) + ", value=" + str(value)
+        return value
+
     def getWeight(self, k):
         return CalcWeightLib.gaussian_pdf(k, self.mean)
 
@@ -44,13 +57,15 @@ class GaussianWeightedKEstimator(BaseKEstimater):
         """
         results = []
         weights = []
-        for i in xrange(1, self.iter_n):
-            hll = BaseHyperLogLog(0.01, i, self.hashFunc)
+        for i in xrange(1, 7):
+            hll = BaseHyperLogLog(self.calcHLLConstant(i), i, self.hashFunc)
+            hll = BaseHyperLogLog(self.calcHLLConstant(i), i, self.hashFunc)
             for d in data:
                 hll.update(d)
             k = hll.calc_cardinality()
             w = self.getWeight(k)
             if i < (RIKEstimator.MAX_REGISTER_INDEX / 2):
+                print k
                 results.append(w * k)
                 weights.append(w)
 
