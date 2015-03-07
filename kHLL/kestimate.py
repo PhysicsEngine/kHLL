@@ -59,13 +59,11 @@ class GaussianWeightedKEstimator(BaseKEstimater):
         weights = []
         for i in xrange(1, 7):
             hll = BaseHyperLogLog(self.calcHLLConstant(i), i, self.hashFunc)
-            hll = BaseHyperLogLog(self.calcHLLConstant(i), i, self.hashFunc)
             for d in data:
                 hll.update(d)
             k = hll.calc_cardinality()
             w = self.getWeight(k)
             if i < (RIKEstimator.MAX_REGISTER_INDEX / 2):
-                print k
                 results.append(w * k)
                 weights.append(w)
 
