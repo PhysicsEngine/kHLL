@@ -9,7 +9,7 @@ def main():
     X = iris.data  # we only take the first two features.
     Y = iris.target
 
-    model = KMeans(n_clusters=8,
+    model = KMeans(n_clusters=10,
                    init='k-means++',
                    n_init=10,
                    max_iter=300,
