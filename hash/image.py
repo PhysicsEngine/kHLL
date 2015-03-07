@@ -10,7 +10,7 @@ def __calc_with_hash(vec, m, target):
     if target == 'hex':
         return m.hexdigest()
     else:
-        return common.hex2dec(m.hexdigest)
+        return common.hex2dec(m.hexdigest())
 
 def md5_for_vec(vec, target = 'dec'):
     """
