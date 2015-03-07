@@ -1,10 +1,12 @@
-import numpy
+__author__ = "shoe116"
 
 class HLLRegister(list):
     def __init__(self, registerIndexSize):
         list.__init__(self)
         self.registerIndexSize = registerIndexSize
         self.mask = int('1' * registerIndexSize, 2)
+
+        ## all value is 0 as init
         for i in xrange(0, 2**registerIndexSize):
             self.append(0)
         
@@ -19,8 +21,7 @@ class HLLRegister(list):
 
     def _calcvalue(self, hashValue):
         value = hashValue >> self.registerIndexSize
-        # print format(value, 'b')
-        # print format(value, 'b')[::-1]
+        ## search min flaged bit 
         return format(value, 'b')[::-1].index('1') + 1
 
 class BaseHyperLogLog(object):
@@ -30,9 +31,9 @@ class BaseHyperLogLog(object):
         self.hashFunc = hashFunc
         self.register = HLLRegister(registerIndexSize)
 
-    def cals_cardinality(self):
+    def calc_cardinality(self):
         invs = map(lambda x: 2**(-x), self.register)
-        return self.constant * len(self.register)**2 * sum(invs)
+        return self.constant * (len(self.register)**2) / sum(invs)
 
     def update(self, data):
         self.register.update(self.hashFunc(data))
