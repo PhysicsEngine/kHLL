@@ -11,6 +11,11 @@ class TestImageHash(unittest.TestCase):
         ret = hash.image.md5_for_vec(vec, 'hex')
         self.assertEqual(ret, 'aa341a15f5ade44faafbe190f98c2587')
 
+    def test_dec_md5_for_vec(self):
+        vec = np.array([1, 2, 3])
+        ret = hash.image.md5_for_vec(vec)
+        self.assertEqual(ret, 226239287802554666915507336155073619335)
+
     def test_sha1_for_vec(self):
         vec = np.array([1, 2, 3])
         ret = hash.image.sha1_for_vec(vec, 'hex')
