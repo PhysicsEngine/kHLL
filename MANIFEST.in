@@ -7,3 +7,4 @@ include README.md
 # it's already declared in setup.py
 include kHLL/HLL/*.py
 include kHLL/hash/*.py
+include kHLL/example/*.py

@@ -6,6 +6,13 @@ kHLL/__init__.py
 kHLL/kestimate.py
 kHLL/HLL/__init__.py
 kHLL/HLL/hyperloglog.py
+kHLL/example/__init__.py
+kHLL/example/dpgmm_example.py
+kHLL/example/gaussian_kestimater_example.py
+kHLL/example/khll_example.py
+kHLL/example/kmeans_example.py
+kHLL/example/kmeans_with_hyperkestimator_example.py
+kHLL/example/rikestimator_example.py
 kHLL/hash/__init__.py
 kHLL/hash/common.py
 kHLL/hash/image.py
